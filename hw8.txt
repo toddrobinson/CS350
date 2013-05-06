@@ -1,0 +1,17 @@
+hw8
+1.
+doctornum patientnum  date ->
+treatcode-> charge
+2.
+a. A+=AB
+b. B+=B
+c. (ACEG)+=ACEGBF
+d.(BD)+=BDEGFAC
+A. only on left side
+B. CDA, BCD,ECD
+C. "A->B" - A is not a super key, but it is part of a candidate key
+"BC->E" -  BC is not a super key, but it is part of a candiadte key together
+"ED->A" ED is not a super key, but they are part of a candidate key together
+All functional dependicies are part of some candidate key so it is 3NF
+d.
+not a super key and does not appear trivial

@@ -1,0 +1,48 @@
+Todd Robinson
+1
+(a)	The probability of X is multiplied by the probability of E, which is then divided by the probability of E.
+(b) WITH less9k as (select count(*) EMP9k
+                from employees
+                where salary < 9000
+                ),
+     E as (select count(*) emp
+                  from employees)
+SELECT trunc(less9k.EMP9k/E.emp, 2) AS "Prob"
+from less9k, E
+                
+
+(c) WITH
+      a as (select count(*) a1
+            from employees join departments using (department_id)
+            join locations using (location_id)
+            join countries using (country_id)
+            where country_name = 'Canada'
+            ),
+      b as (select count(*) b1
+            from employees
+            where salary > 8000),
+      c as (select count(*) c1
+            from employees)
+      SELECT trunc(((a.a1/c.c1)*(b.b1/c.c1))/(b.b1/c.c1),5)
+      FROM a,b,c
+2 (a) (i) p(A | B,C,D) = p(A | C,D) 
+		(ii) p(C | D,B) = p(C | B)
+   (b) 	p(A,C | B,D) 
+        p(A,C,B,D) / p(B,D)  [Definition of conditional probability]
+		p(A,B,C,D) / p(B,D)  [Commutativity, and associativity, of AND]
+		p(A|B,C,D) p(B,C,D) / p(B,D) [product (chain) rule]
+		p(A|C,D) p(B,C,D) / p(B,D) [Given assumtion (2ai)]
+		p(A|C,D) p(C,D,B) /p(B,D) [Commutativity, and associativity, of AND]
+		p(A|C,D) p(C|D,B) p(D,B)/p(B,D) [product (chain) rule]
+		p(A|C,D) p(C|B) p(D,B) / p(B,D) [Given assumption (2aii)]
+		p(A|C,D) p(C|B) P(D,B) / P(D,B) [Commutativity, and associativity, of AND]
+		p(A|C,D) p(C|B) [ALGEBRA] 
+		
+3  
+    p(A|B,C)
+	p(A,B,C) / p(B,C) [Definition of conditional probability]
+	p(C,A,B) / p(B,C) [Commutativity, and associativity, of AND]
+	p(C|A,B) p(A,B) / p(B,C) [product (chain) rule]
+	p(C|A,B) p(A,B) / p(C,B) [Commutativity, and associativity, of AND]
+	p(C|A,B) p(A|B) p(B) / p(C|B) p(B) [product (chain) rule]
+	p(C|A,B) p(A|B) / P(C|B) [Algebra]

@@ -1,0 +1,92 @@
+--1 
+WITH purEMP as (
+                  select employee_id
+                  from employees
+                  join departments on departments.department_id = employees.department_id
+                  where department_name = 'Purchasing'
+               )
+select count(employee_id)
+from purEMP;
+
+--2
+WITH canada as (select employee_id
+                from employees join departments using (department_id)
+                join locations using (location_id)
+                join countries using (country_id)
+                where country_name = 'Canada'
+                ),
+over500 as (select employee_id
+            from employees
+            where salary > 500)
+select employee_id
+from canada
+INTERSECT
+select employee_id
+from over500
+                
+--3
+select department_name, department_id
+	from departments d1
+	where 
+	exists ( select department_id, department_name
+	                from employees 
+	                where salary > 12000
+                  AND employees.department_id = d1.department_id
+	                )
+--4
+select DISTINCT department_name, departments.department_id
+from employees, departments
+where employees.department_id = departments.department_id
+AND NOT exists (select e.salary
+                from employees e
+                where e.salary > 4000
+                AND e.salary < 9000
+                AND e.employee_id = employees.employee_id);
+--5
+CREATE OR REPLACE FORCE VIEW "HR"."VIEW_SALES" ("EMPLOYEE_ID", "LAST_NAME", "SALARY")
+AS
+  SELECT employee_id,
+    last_name,
+    salary
+  FROM employees
+  JOIN departments USING (department_id)
+  WHERE department_name = 'Sales';
+  
+select salary, count(*)
+from VIEW_SALES
+group by salary;
+   
+  
+  DROP view VIEW_SALES;
+--6
+CREATE TABLE "HR"."DONATIONS"
+  (
+    "DONATION_ID" NUMBER(6,0),
+    "EMPLOYEE_ID" NUMBER(6,0),
+    "AMOUNT"      NUMBER(8,2),
+    "AGENCY"     VARCHAR2(20 BYTE)
+  )
+  SEGMENT CREATION DEFERRED PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING TABLESPACE "USERS" ;
+
+ALTER TABLE donations
+  ADD PRIMARY KEY (donation_id);
+  
+insert into donations(donation_id, employee_id, amount, agency)
+  values (9101, 100, 75.00, 'ABC');
+insert into donations(donation_id, employee_id, amount, agency)
+  values (9102, 104, 35.00, 'EFG');
+insert into donations(donation_id, employee_id, amount, agency)
+  values (9103, 104, 56.45, 'XYZ');
+insert into donations(donation_id, employee_id, amount, agency)
+  values (9104, 104, 35.00, 'EFG');
+insert into donations(donation_id, employee_id, amount, agency)
+  values (9105, 100, 75.00, 'ABC');
+insert into donations(donation_id, employee_id, amount, agency)
+  values (9106, 108, 55.25, 'XYZ');
+  
+select last_name, amount
+from donations join employees using (employee_id)
+where amount > 0;
+
+drop table donations; 
+

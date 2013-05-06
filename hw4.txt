@@ -1,0 +1,62 @@
+--1
+select LOCATION_ID, POSTAL_CODE
+from LOCATIONS
+where regexp_like (CITY, '^S.*S.*o$')
+
+--2
+select DEPARTMENT_ID, DEPARTMENT_NAME
+from departments
+where regexp_like (DEPARTMENT_NAME, '^S.{3}s$')
+
+--3
+select EMPLOYEE_ID, LAST_NAME
+from employees
+where regexp_like (LAST_NAME,'^[^K].*in.*$')
+
+--4
+select EMPLOYEE_ID, LAST_NAME
+from employees
+where regexp_like (LAST_NAME,'(^.{6}$)|(^.{4}$)')
+
+--5
+select EMPLOYEE_ID, LAST_NAME
+from employees
+MINUS
+select EMPLOYEE_ID, LAST_NAME
+from employees
+where regexp_like (last_name, '^.*en.*')
+or regexp_like (last_name, '^.*in.*')
+--6
+select employee_id, last_name
+from  (select *
+       from employees join departments using (department_id)
+       where department_name = 'IT')
+where SALARY > ALL(select salary 
+                   from employees join departments using (department_id)    
+                   where department_name = 'Shipping');
+				
+				
+--7
+select e.last_name "Employee's last name", m.last_name "Manager's last name"
+from employees e
+join employees m on e.manager_id = m.employee_id
+where m.salary > 4*e.salary;
+--8
+select e.last_name "Employee's last name", m.last_name "Manager's last name"
+from employees e
+join employees m on e.manager_id = m.employee_id
+where m.salary <= 3*e.salary;
+
+--9
+select last_name
+from employees
+where salary >= all(select salary
+                   from employees
+                   where salary < all (select salary
+                                       from employees
+                                       where salary >= all(select salary
+                                                           from employees)))
+and salary != all(select salary
+                  from employees
+                  where salary >= all(select salary 
+                                      from employees))

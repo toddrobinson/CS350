@@ -1,0 +1,78 @@
+--1
+select department_id, count(first_name)
+from(
+      select e.first_name, e.department_id
+      from employees e
+      where salary > (select e.salary
+                      from employees e
+                      where e.first_name like ('Luis') and e.last_name like ('Popp'))
+intersect
+
+select e.first_name, e.department_id
+from employees e
+where salary < (select e.salary
+from employees e
+where e.first_name like ('Alexander') and e.last_name like ('Hunold'))
+     )
+group by department_id;
+
+--2
+select city
+from (select city, count(city) as ppl
+from (select e.employee_id, l.city
+from employees e
+join departments dp
+on dp.department_id = e.department_id
+join locations l
+on dp.location_id = l.location_id
+)
+group by city
+)
+where ppl < 10
+
+
+
+
+
+
+
+--3
+SELECT DISTINCT COUNTRY_NAME
+FROM employees e JOIN departments d on d.department_id = e.department_id
+JOIN locations l on l.location_id = d.location_id
+JOIN countries c on c.country_id = l.country_id
+WHERE e.last_name LIKE '%g'
+AND e.salary < (SELECT salary
+                from employees
+                where FIRST_NAME = 'Laura'
+                AND LAST_NAME = 'Bissot');
+
+--4
+update employees
+set salary = salary * 1.10
+where department_id =
+( select department_id
+  from departments
+  where department_name = 'Finance' )
+AND employees.salary <8000;
+
+--5
+update employees
+set department_id = (select department_id
+                     from departments
+                     where department_name = 'Human Resources')
+where department_id = (select department_id
+                       from departments
+                       where department_name = 'Marketing');
+Error report:
+SQL Error: ORA-00001: unique constraint (HR.JHIST_EMP_ID_ST_DATE_PK) violated
+ORA-06512: at "HR.ADD_JOB_HISTORY", line 10
+ORA-06512: at "HR.UPDATE_JOB_HISTORY", line 2
+ORA-04088: error during execution of trigger 'HR.UPDATE_JOB_HISTORY'
+00001. 00000 -  "unique constraint (%s.%s) violated"
+*Cause:    An UPDATE or INSERT statement attempted to insert a duplicate key.
+           For Trusted Oracle configured in DBMS MAC mode, you may see
+           this message if a duplicate entry exists at a different level.
+*Action:   Either remove the unique restriction or do not insert the key.
+					   
+
